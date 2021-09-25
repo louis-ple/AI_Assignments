@@ -102,13 +102,10 @@ def depthFirstSearch(problem):
             continu = False
         else:
             element = stack.pop()
-            print('stack', stack)
-            print('element', element)
             if problem.isGoalState(element['position']):
                 solution = element['path']
                 continu = False
             else:
-                #est ce que cet element a ete visite
                 if element['position'] not in visitedStates:
                     visitedStates.add(element['position'])
                     successors = problem.getSuccessors(element['position'])
@@ -125,13 +122,6 @@ def depthFirstSearch(problem):
         # on prend ses successeurs,
         # on y associe le chemin de son parent
         # et pn les mets dans le stack
-
-
-
-
-    print(solution)
-
-    #util.raiseNotDefined()
     return solution
 
 
@@ -142,8 +132,31 @@ def breadthFirstSearch(problem):
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 2 ICI
     '''
+    visitedStates = set()
+    solution = []
+    queue= util.Queue()
+    initialPosition = problem.getStartState()
+    queue.push({'position':initialPosition, 'path':[]})
+    continu = True
+    while continu:
+        if queue.isEmpty():
+            continu = False
+        else:
+            element = queue.pop()
+            if problem.isGoalState(element['position']):
+                solution = element['path']
+                continu = False
+            else:
+                #est ce que cet element a ete visite
+                if element['position'] not in visitedStates:
+                    visitedStates.add(element['position'])
+                    successors = problem.getSuccessors(element['position'])
+                    for s in successors:
+                        path = element['path'].copy()
+                        path.append(s[1])
+                        queue.push({'position':s[0], 'path':path})
+    return solution
 
-    util.raiseNotDefined()
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
