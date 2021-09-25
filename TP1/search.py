@@ -102,6 +102,8 @@ def depthFirstSearch(problem):
             continu = False
         else:
             element = stack.pop()
+            print('stack', stack)
+            print('element', element)
             if problem.isGoalState(element['position']):
                 solution = element['path']
                 continu = False
@@ -111,7 +113,7 @@ def depthFirstSearch(problem):
                     visitedStates.add(element['position'])
                     successors = problem.getSuccessors(element['position'])
                     for s in successors:
-                        path = element['path']
+                        path = element['path'].copy()
                         path.append(s[1])
                         stack.push({'position':s[0], 'path':path})
 
