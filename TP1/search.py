@@ -70,6 +70,9 @@ def tinyMazeSearch(problem):
     from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
+    print("Start:", problem.getStartState())
+    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     return  [s, s, w, s, w, w, s, w]
 
 def depthFirstSearch(problem):
@@ -165,8 +168,32 @@ def uniformCostSearch(problem):
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 3 ICI
     '''
+    visitedStates = set()
+    solution = []
+    queue = util.PriorityQueue()
+    initialPosition = problem.getStartState()
+    queue.push({'position': initialPosition, 'path': [], 'priority': 0}, 0)
+    continu = True
+    while continu:
+        if queue.isEmpty():
+            continu = False
+        else:
+            element = queue.pop()
+            if problem.isGoalState(element['position']):
+                solution = element['path']
+                continu = False
+            else:
+                # est ce que cet element a ete visite
+                if element['position'] not in visitedStates:
 
-    util.raiseNotDefined()
+                    visitedStates.add(element['position'])
+                    successors = problem.getSuccessors(element['position'])
+                    for s in successors:
+                        path = element['path'].copy()
+                        path.append(s[1])
+                        cumulativePriority = s[2] + element['priority']
+                        queue.push({'position': s[0], 'path': path, 'priority': cumulativePriority }, cumulativePriority )
+    return solution
 
 def nullHeuristic(state, problem=None):
     """
