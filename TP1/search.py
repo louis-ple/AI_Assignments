@@ -208,7 +208,35 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         INSÉREZ VOTRE SOLUTION À LA QUESTION 4 ICI
     '''
 
-    util.raiseNotDefined()
+    visitedStates = set()
+    solution = []
+    queue = util.PriorityQueue()
+    initialPosition = problem.getStartState()
+    priority = 0
+    queue.push({'position': initialPosition, 'path': [], 'priority': priority},
+               priority + heuristic(initialPosition, problem))
+    continu = True
+    while continu:
+        if queue.isEmpty():
+            continu = False
+        else:
+            element = queue.pop()
+            if problem.isGoalState(element['position']):
+                solution = element['path']
+                continu = False
+            else:
+                # est ce que cet element a ete visite
+                if element['position'] not in visitedStates:
+
+                    visitedStates.add(element['position'])
+                    successors = problem.getSuccessors(element['position'])
+                    for s in successors:
+                        path = element['path'].copy()
+                        path.append(s[1])
+                        cumulativePriority = s[2] + element['priority']
+                        queue.push({'position': s[0], 'path': path, 'priority': cumulativePriority},
+                                   cumulativePriority+heuristic(s[0], problem))
+    return solution
 
 
 # Abbreviations
