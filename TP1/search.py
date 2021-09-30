@@ -135,7 +135,7 @@ def breadthFirstSearch(problem):
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 2 ICI
     '''
-    visitedStates = set()
+    visitedStates = []
     solution = []
     queue= util.Queue()
     initialPosition = problem.getStartState()
@@ -151,13 +151,18 @@ def breadthFirstSearch(problem):
                 continu = False
             else:
                 #est ce que cet element a ete visite
+                print('element[position] ', element['position'])
+                #print(visitedStates)
                 if element['position'] not in visitedStates:
-                    visitedStates.add(element['position'])
+                    visitedStates.append(element['position'])
                     successors = problem.getSuccessors(element['position'])
                     for s in successors:
                         path = element['path'].copy()
                         path.append(s[1])
                         queue.push({'position':s[0], 'path':path})
+                    else:
+                        print('in')
+
     return solution
 
 

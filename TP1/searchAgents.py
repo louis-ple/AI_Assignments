@@ -294,6 +294,8 @@ class CornersProblem(search.SearchProblem):
         '''
             INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
         '''
+        self.found_corners =[False, False, False, False]
+        self.costFn =  lambda x: 1
 
 
     def getStartState(self):
@@ -305,8 +307,7 @@ class CornersProblem(search.SearchProblem):
         '''
             INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
         '''
-        
-        util.raiseNotDefined()
+        return self.startingPosition, [False, False, False, False]
 
     def isGoalState(self, state):
         """
@@ -316,8 +317,18 @@ class CornersProblem(search.SearchProblem):
         '''
             INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
         '''
-
-        util.raiseNotDefined()
+        #check si state est un corner
+        #si oui, on update self.found_corners
+        if state[0] in self.corners:
+            goalIndex = self.corners.index(state[0])
+            self.found_corners[goalIndex] = True
+        #check si self.found_corners est tout a vrai
+        isGoal = True
+        for i in self.found_corners:
+            isGoal = isGoal and i
+        if isGoal:
+            print('goal')
+        return isGoal
 
     def getSuccessors(self, state):
         """
@@ -334,10 +345,14 @@ class CornersProblem(search.SearchProblem):
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   x,y = currentPosition
-            #   dx, dy = Actions.directionToVector(action)
-            #   nextx, nexty = int(x + dx), int(y + dy)
-            #   hitsWall = self.walls[nextx][nexty]
+            x,y = state[0]
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+            hitsWall = self.walls[nextx][nexty]
+            if not hitsWall:
+                nextState = ((nextx, nexty), self.found_corners)
+                cost = self.costFn(nextState[0])
+                successors.append((nextState, action, cost))
            
             '''
                 INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
