@@ -502,7 +502,7 @@ def foodHeuristic(state, problem: FoodSearchProblem):
             return problem.heuristicInfo[(start, end)]
         except:
             prob = PositionSearchProblem(gameState= problem.startingGameState, goal=end, start=start)
-            problem.heuristicInfo[(start, end)] = len(search.bfs(prob))
+            problem.heuristicInfo[(start, end)] = len(search.aStarSearch(prob, manhattanHeuristic))
             return problem.heuristicInfo[(start, end)]
     distance = []
     distanceFood = [0]
