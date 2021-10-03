@@ -43,6 +43,7 @@ from game import Actions
 import util
 import time
 import search
+import math
 
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."
@@ -294,8 +295,8 @@ class CornersProblem(search.SearchProblem):
         '''
             INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
         '''
-        self.found_corners =[False, False, False, False]
-        self.costFn =  lambda x: 1
+        self.found_corners = [False, False, False, False]
+        self.costFn = lambda x: 1
 
 
     def getStartState(self):
@@ -307,7 +308,7 @@ class CornersProblem(search.SearchProblem):
         '''
             INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
         '''
-        return self.startingPosition, [False, False, False, False]
+        return self.startingPosition, (False, False, False, False)
 
     def isGoalState(self, state):
         """
@@ -321,13 +322,13 @@ class CornersProblem(search.SearchProblem):
         #si oui, on update self.found_corners
         if state[0] in self.corners:
             goalIndex = self.corners.index(state[0])
-            self.found_corners[goalIndex] = True
-        #check si self.found_corners est tout a vrai
+            temp_found_corners = list(self.found_corners)
+            temp_found_corners[goalIndex] = True
+            self.found_corners = tuple(temp_found_corners)
+        #check si tous les coins ont été visités
         isGoal = True
         for i in self.found_corners:
             isGoal = isGoal and i
-        if isGoal:
-            print('goal')
         return isGoal
 
     def getSuccessors(self, state):
@@ -353,7 +354,7 @@ class CornersProblem(search.SearchProblem):
                 nextState = ((nextx, nexty), self.found_corners)
                 cost = self.costFn(nextState[0])
                 successors.append((nextState, action, cost))
-           
+           #on ne veut pas retourner dans un coin ou on a déja été? peut etre pas important
             '''
                 INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
             '''
@@ -491,8 +492,24 @@ def foodHeuristic(state, problem: FoodSearchProblem):
 
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 7 ICI
+        source:
+        Shihan Ran, Assignment 1. Search in Pacman-Project Report. 
+        https://rshcaroline.github.io/research/resources/pacman-report.pdf, consulté le 2021-10-12
     '''
 
-
-    return 0
+    def getGridDistance(start, end):
+        try :
+            return problem.heuristicInfo[(start, end)]
+        except:
+            prob = PositionSearchProblem(gameState= problem.startingGameState, goal=end, start=start)
+            problem.heuristicInfo[(start, end)] = len(search.bfs(prob))
+            return problem.heuristicInfo[(start, end)]
+    distance = []
+    distanceFood = [0]
+    for foodPosition in foodGrid.asList():
+        distance.append(getGridDistance(position, foodPosition))
+        for f in foodGrid.asList():
+            distanceFood.append(getGridDistance(foodPosition, f))
+    h = min(distance) + max(distanceFood) if len(distance) else max(distanceFood)
+    return h
 

@@ -147,11 +147,14 @@ def breadthFirstSearch(problem):
         else:
             element = queue.pop()
             if problem.isGoalState(element['position']):
+                print("visitedStates")
+                for i in visitedStates:
+                    print(i)
                 solution = element['path']
                 continu = False
             else:
                 #est ce que cet element a ete visite
-                print('element[position] ', element['position'])
+                #print('element[position] ', element['position'])
                 #print(visitedStates)
                 if element['position'] not in visitedStates:
                     visitedStates.append(element['position'])
@@ -160,9 +163,7 @@ def breadthFirstSearch(problem):
                         path = element['path'].copy()
                         path.append(s[1])
                         queue.push({'position':s[0], 'path':path})
-                    else:
-                        print('in')
-
+    print(solution)
     return solution
 
 
