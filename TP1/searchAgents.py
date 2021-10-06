@@ -295,9 +295,8 @@ class CornersProblem(search.SearchProblem):
         '''
             INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
         '''
-        self.found_corners = [False, False, False, False]
+        #self.found_corners = [False, False, False, False]
         self.costFn = lambda x: 1
-
 
     def getStartState(self):
         """
@@ -308,7 +307,11 @@ class CornersProblem(search.SearchProblem):
         '''
             INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
         '''
-        return self.startingPosition, (False, False, False, False)
+
+        top, right = self.walls.height - 2, self.walls.width - 2
+
+        return {'pos': self.startingPosition, (1, 1): True, (1, top): True, (right, 1): True, (right, top): True}
+        #return {self.startingPosition, True, True, True, True}
 
     def isGoalState(self, state):
         """
@@ -318,17 +321,23 @@ class CornersProblem(search.SearchProblem):
         '''
             INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
         '''
-        #check si state est un corner
-        #si oui, on update self.found_corners
-        if state[0] in self.corners:
-            goalIndex = self.corners.index(state[0])
-            temp_found_corners = list(self.found_corners)
-            temp_found_corners[goalIndex] = True
-            self.found_corners = tuple(temp_found_corners)
-        #check si tous les coins ont été visités
+
+        # #check si state est un corner
+        # #si oui, on update self.found_corners
+        # if state[0] in self.corners:
+        #     goalIndex = self.corners.index(state[0])
+        #     temp_found_corners = list(self.found_corners)
+        #     temp_found_corners[goalIndex] = True
+        #     self.found_corners = tuple(temp_found_corners)
+        # #check si tous les coins ont été visités
         isGoal = True
-        for i in self.found_corners:
-            isGoal = isGoal and i
+
+        # for i in self.found_corners:
+        #     isGoal = isGoal and i
+        for i in self.corners:
+            if state[i]:
+                isGoal = False
+
         return isGoal
 
     def getSuccessors(self, state):
@@ -342,23 +351,34 @@ class CornersProblem(search.SearchProblem):
             is the incremental cost of expanding to that successor
         """
 
+        top, right = self.walls.height - 2, self.walls.width - 2
+
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            x,y = state[0]
+            x, y = state['pos']
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
-            hitsWall = self.walls[nextx][nexty]
-            if not hitsWall:
-                nextState = ((nextx, nexty), self.found_corners)
-                cost = self.costFn(nextState[0])
-                successors.append((nextState, action, cost))
-           #on ne veut pas retourner dans un coin ou on a déja été? peut etre pas important
+
             '''
                 INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
             '''
 
+            hitsWall = self.walls[nextx][nexty]
+
+            # if not hitsWall:
+            #     nextState = ((nextx, nexty), self.found_corners)
+            #     cost = self.costFn(nextState[0])
+            #     successors.append((nextState, action, cost))
+            # on ne veut pas retourner dans un coin ou on a déja été? peut etre pas important
+
+            if not hitsWall:
+                nextState = {'pos': (nextx, nexty), (1,1):state[(1,1)], (1,top): state[(1,top)], (right, 1):state[(right, 1)], (right, top): state[(right, top)]}
+                if nextState['pos'] in self.corners:
+                    nextState[nextState['pos']] = False
+                cost = self.costFn(nextState['pos'])
+                successors.append(( nextState, action, cost))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
