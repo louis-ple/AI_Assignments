@@ -418,8 +418,13 @@ def cornersHeuristic(state, problem):
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 6 ICI
     '''
-    
-    return 0
+
+    cost = self.costFn(state['position'])
+    for i in corners:
+        dist = util.manhattanDistance(state['position'],i)
+        if dist < cost:
+            cost = dist
+    return cost
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
