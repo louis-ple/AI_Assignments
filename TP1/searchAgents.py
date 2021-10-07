@@ -310,8 +310,7 @@ class CornersProblem(search.SearchProblem):
 
         top, right = self.walls.height - 2, self.walls.width - 2
 
-        return {'pos': self.startingPosition, (1, 1): True, (1, top): True, (right, 1): True, (right, top): True}
-        #return {self.startingPosition, True, True, True, True}
+        return {'position': self.startingPosition, (1,1): True, (1,top): True, (right,1): True, (right,top): True}
 
     def isGoalState(self, state):
         """
@@ -335,7 +334,7 @@ class CornersProblem(search.SearchProblem):
         # for i in self.found_corners:
         #     isGoal = isGoal and i
         for i in self.corners:
-            if state[i]:
+            if state[i] == True:
                 isGoal = False
 
         return isGoal
@@ -357,7 +356,7 @@ class CornersProblem(search.SearchProblem):
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            x, y = state['pos']
+            x, y = state['position']
             dx, dy = Actions.directionToVector(action)
             nextx, nexty = int(x + dx), int(y + dy)
 
@@ -367,18 +366,22 @@ class CornersProblem(search.SearchProblem):
 
             hitsWall = self.walls[nextx][nexty]
 
-            # if not hitsWall:
+            if not hitsWall:
+
             #     nextState = ((nextx, nexty), self.found_corners)
             #     cost = self.costFn(nextState[0])
-            #     successors.append((nextState, action, cost))
             # on ne veut pas retourner dans un coin ou on a déja été? peut etre pas important
 
-            if not hitsWall:
-                nextState = {'pos': (nextx, nexty), (1,1):state[(1,1)], (1,top): state[(1,top)], (right, 1):state[(right, 1)], (right, top): state[(right, top)]}
-                if nextState['pos'] in self.corners:
-                    nextState[nextState['pos']] = False
-                cost = self.costFn(nextState['pos'])
-                successors.append(( nextState, action, cost))
+                nextState = {'position': (nextx,nexty),
+                             (1,1): state[(1,1)],
+                             (1,top): state[(1,top)],
+                             (right,1): state[(right,1)],
+                             (right,top): state[(right,top)]}
+
+                if nextState['position'] in self.corners:
+                    nextState[nextState['position']] = False
+                cost = self.costFn(nextState['position'])
+                successors.append((nextState, action, cost))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
