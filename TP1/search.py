@@ -1,5 +1,10 @@
 # search.py
 # ---------
+
+"""
+Frédérique Roy (1894397)
+Louis Plessis (1933334)
+"""
 # Licensing Information:  You are free to use or extend these projects for
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
@@ -70,6 +75,9 @@ def tinyMazeSearch(problem):
     from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
+    print("Start:", problem.getStartState())
+    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
+    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     return  [s, s, w, s, w, w, s, w]
 
 def depthFirstSearch(problem):
@@ -106,12 +114,11 @@ def depthFirstSearch(problem):
                 solution = element['path']
                 continu = False
             else:
-                #est ce que cet element a ete visite
                 if element['position'] not in visitedStates:
                     visitedStates.add(element['position'])
                     successors = problem.getSuccessors(element['position'])
                     for s in successors:
-                        path = element['path']
+                        path = element['path'].copy()
                         path.append(s[1])
                         stack.push({'position':s[0], 'path':path})
 
@@ -123,13 +130,6 @@ def depthFirstSearch(problem):
         # on prend ses successeurs,
         # on y associe le chemin de son parent
         # et pn les mets dans le stack
-
-
-
-
-    print(solution)
-
-    #util.raiseNotDefined()
     return solution
 
 
@@ -140,8 +140,37 @@ def breadthFirstSearch(problem):
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 2 ICI
     '''
+    visitedStates = []
+    solution = []
+    queue= util.Queue()
+    initialPosition = problem.getStartState()
+    queue.push({'position':initialPosition, 'path':[]})
+    continu = True
+    while continu:
+        if queue.isEmpty():
+            continu = False
+        else:
+            element = queue.pop()
+            if problem.isGoalState(element['position']):
+                print("visitedStates")
+                for i in visitedStates:
+                    print(i)
+                solution = element['path']
+                continu = False
+            else:
+                #est ce que cet element a ete visite
+                #print('element[position] ', element['position'])
+                #print(visitedStates)
+                if element['position'] not in visitedStates:
+                    visitedStates.append(element['position'])
+                    successors = problem.getSuccessors(element['position'])
+                    for s in successors:
+                        path = element['path'].copy()
+                        path.append(s[1])
+                        queue.push({'position':s[0], 'path':path})
+    #print(solution)
+    return solution
 
-    util.raiseNotDefined()
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
@@ -150,8 +179,32 @@ def uniformCostSearch(problem):
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 3 ICI
     '''
+    visitedStates = set()
+    solution = []
+    queue = util.PriorityQueue()
+    initialPosition = problem.getStartState()
+    queue.push({'position': initialPosition, 'path': [], 'priority': 0}, 0)
+    continu = True
+    while continu:
+        if queue.isEmpty():
+            continu = False
+        else:
+            element = queue.pop()
+            if problem.isGoalState(element['position']):
+                solution = element['path']
+                continu = False
+            else:
+                # est ce que cet element a ete visite
+                if element['position'] not in visitedStates:
 
-    util.raiseNotDefined()
+                    visitedStates.add(element['position'])
+                    successors = problem.getSuccessors(element['position'])
+                    for s in successors:
+                        path = element['path'].copy()
+                        path.append(s[1])
+                        cumulativePriority = s[2] + element['priority']
+                        queue.push({'position': s[0], 'path': path, 'priority': cumulativePriority }, cumulativePriority )
+    return solution
 
 def nullHeuristic(state, problem=None):
     """
@@ -166,7 +219,37 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         INSÉREZ VOTRE SOLUTION À LA QUESTION 4 ICI
     '''
 
-    util.raiseNotDefined()
+    visitedStates = []
+    solution = []
+    queue = util.PriorityQueue()
+    initialPosition = problem.getStartState()
+    priority = 0
+    queue.push({'position': initialPosition, 'path': [], 'priority': priority},
+               priority + heuristic(initialPosition, problem))
+    continu = True
+    while continu:
+        if queue.isEmpty():
+            continu = False
+        else:
+            element = queue.pop()
+            if problem.isGoalState(element['position']):
+                solution = element['path']
+                continu = False
+            else:
+                # est ce que cet element a ete visite
+                #print("element['position']" , element['position'])
+                #print("visitedStates",visitedStates)
+                if element['position'] not in visitedStates:
+
+                    visitedStates.append(element['position'])
+                    successors = problem.getSuccessors(element['position'])
+                    for s in successors:
+                        path = element['path'].copy()
+                        path.append(s[1])
+                        cumulativePriority = s[2] + element['priority']
+                        queue.push({'position': s[0], 'path': path, 'priority': cumulativePriority},
+                                   cumulativePriority+heuristic(s[0], problem))
+    return solution
 
 
 # Abbreviations

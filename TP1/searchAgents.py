@@ -1,5 +1,11 @@
 # searchAgents.py
 # ---------------
+"""
+Frédérique Roy (1894397)
+Louis Plessis (1933334)
+
+
+"""
 # Licensing Information:  You are free to use or extend these projects for
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
@@ -43,6 +49,7 @@ from game import Actions
 import util
 import time
 import search
+import math
 
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."
@@ -294,7 +301,8 @@ class CornersProblem(search.SearchProblem):
         '''
             INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
         '''
-
+        #self.found_corners = [False, False, False, False]
+        self.costFn = lambda x: 1
 
     def getStartState(self):
         """
@@ -305,8 +313,14 @@ class CornersProblem(search.SearchProblem):
         '''
             INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
         '''
-        
-        util.raiseNotDefined()
+
+        top, right = self.walls.height - 2, self.walls.width - 2
+
+        return {'position': self.startingPosition,
+                (1,1): True,
+                (1,top): True,
+                (right,1): True,
+                (right,top): True}
 
     def isGoalState(self, state):
         """
@@ -317,7 +331,23 @@ class CornersProblem(search.SearchProblem):
             INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
         '''
 
-        util.raiseNotDefined()
+        # #check si state est un corner
+        # #si oui, on update self.found_corners
+        # if state[0] in self.corners:
+        #     goalIndex = self.corners.index(state[0])
+        #     temp_found_corners = list(self.found_corners)
+        #     temp_found_corners[goalIndex] = True
+        #     self.found_corners = tuple(temp_found_corners)
+        # #check si tous les coins ont été visités
+        isGoal = True
+
+        # for i in self.found_corners:
+        #     isGoal = isGoal and i
+        for i in self.corners:
+            if state[i] == True:
+                isGoal = False
+
+        return isGoal
 
     def getSuccessors(self, state):
         """
@@ -330,19 +360,41 @@ class CornersProblem(search.SearchProblem):
             is the incremental cost of expanding to that successor
         """
 
+        top, right = self.walls.height - 2, self.walls.width - 2
+
         successors = []
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
-            #   x,y = currentPosition
-            #   dx, dy = Actions.directionToVector(action)
-            #   nextx, nexty = int(x + dx), int(y + dy)
-            #   hitsWall = self.walls[nextx][nexty]
-           
+            x, y = state['position']
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+
             '''
                 INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
+                source:
+                Shihan Ran, Assignment 1. Search in Pacman-Project Report. 
+                https://rshcaroline.github.io/research/resources/pacman-report.pdf, consulté le 2021-10-04
             '''
 
+            hitsWall = self.walls[nextx][nexty]
+
+            if not hitsWall:
+
+            #     next = ((nextx, nexty), self.found_corners)
+            #     cost = self.costFn(nextState[0])
+            # on ne veut pas retourner dans un coin ou on a déja été? peut etre pas important
+
+                successor = {'position': (nextx,nexty),
+                             (1,1): state[(1,1)],
+                             (1,top): state[(1,top)],
+                             (right,1): state[(right,1)],
+                             (right,top): state[(right,top)]}
+
+                if successor['position'] in self.corners:
+                    successor[successor['position']] = False
+                stepCost = self.costFn(successor['position'])
+                successors.append((successor, action, stepCost))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -378,9 +430,25 @@ def cornersHeuristic(state, problem):
 
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 6 ICI
-    '''
-    
-    return 0
+        source:
+        Shihan Ran, Assignment 1. Search in Pacman-Project Report. 
+        https://rshcaroline.github.io/research/resources/pacman-report.pdf, consulté le 2021-10-04
+
+     '''
+
+    # trouver les corners non visités
+    unvisited = []
+    for key, value in state.items():
+        if key != 'position' and value:
+            unvisited.append(key)
+    cost = 0
+
+    # heuristique: la plus grande distance entre l'état et un corner non-visité
+    for i in unvisited:
+        dist = util.manhattanDistance(state['position'],i)
+        if dist > cost:
+            cost = dist
+    return cost
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
@@ -476,8 +544,24 @@ def foodHeuristic(state, problem: FoodSearchProblem):
 
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 7 ICI
+        source:
+        Shihan Ran, Assignment 1. Search in Pacman-Project Report. 
+        https://rshcaroline.github.io/research/resources/pacman-report.pdf, consulté le 2021-10-04
     '''
 
-
-    return 0
+    def getGridDistance(start, end):
+        try :
+            return problem.heuristicInfo[(start, end)]
+        except:
+            prob = PositionSearchProblem(gameState= problem.startingGameState, goal=end, start=start)
+            problem.heuristicInfo[(start, end)] = len(search.aStarSearch(prob, manhattanHeuristic))
+            return problem.heuristicInfo[(start, end)]
+    distance = []
+    distanceFood = [0]
+    for foodPosition in foodGrid.asList():
+        distance.append(getGridDistance(position, foodPosition))
+        for f in foodGrid.asList():
+            distanceFood.append(getGridDistance(foodPosition, f))
+    h = min(distance) + max(distanceFood) if len(distance) else max(distanceFood)
+    return h
 
