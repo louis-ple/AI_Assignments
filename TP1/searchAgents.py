@@ -423,7 +423,7 @@ def cornersHeuristic(state, problem):
     # trouver les corners non visités
     unvisited = []
     for key, value in state.items():
-        if key is not 'position' and value:
+        if key != 'position' and value:
             unvisited.append(key)
     cost = 0
 
