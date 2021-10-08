@@ -417,12 +417,20 @@ def cornersHeuristic(state, problem):
 
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 6 ICI
-    '''
 
-    cost = self.costFn(state['position'])
-    for i in corners:
+     '''
+
+    # trouver les corners non visités
+    unvisited = []
+    for key, value in state.items():
+        if key is not 'position' and value:
+            unvisited.append(key)
+    cost = 0
+
+    # heuristique: la plus grande distance entre l'état et un corner non-visité
+    for i in unvisited:
         dist = util.manhattanDistance(state['position'],i)
-        if dist < cost:
+        if dist > cost:
             cost = dist
     return cost
 
