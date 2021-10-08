@@ -1,5 +1,3 @@
-# INF8215
+# INF8215: Intelligence artificielle: méthodes et algorithmes (Automne 2021)
 
-Intelligence artificielle: méthodes et algorithmes
-
-*Artificial intelligence: methods and algorithms*
+*Artificial intelligence: methods and algorithms (Fall 2021)*
