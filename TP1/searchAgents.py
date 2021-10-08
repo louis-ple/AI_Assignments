@@ -1,5 +1,11 @@
 # searchAgents.py
 # ---------------
+"""
+Frédérique Roy (1894397)
+Louis Plessis (
+
+
+"""
 # Licensing Information:  You are free to use or extend these projects for
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
@@ -417,6 +423,9 @@ def cornersHeuristic(state, problem):
 
     '''
         INSÉREZ VOTRE SOLUTION À LA QUESTION 6 ICI
+        source:
+        Shihan Ran, Assignment 1. Search in Pacman-Project Report. 
+        https://rshcaroline.github.io/research/resources/pacman-report.pdf, consulté le 2021-10-04
 
      '''
 
@@ -530,7 +539,7 @@ def foodHeuristic(state, problem: FoodSearchProblem):
         INSÉREZ VOTRE SOLUTION À LA QUESTION 7 ICI
         source:
         Shihan Ran, Assignment 1. Search in Pacman-Project Report. 
-        https://rshcaroline.github.io/research/resources/pacman-report.pdf, consulté le 2021-10-12
+        https://rshcaroline.github.io/research/resources/pacman-report.pdf, consulté le 2021-10-04
     '''
 
     def getGridDistance(start, end):
