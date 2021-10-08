@@ -316,7 +316,11 @@ class CornersProblem(search.SearchProblem):
 
         top, right = self.walls.height - 2, self.walls.width - 2
 
-        return {'position': self.startingPosition, (1,1): True, (1,top): True, (right,1): True, (right,top): True}
+        return {'position': self.startingPosition,
+                (1,1): True,
+                (1,top): True,
+                (right,1): True,
+                (right,top): True}
 
     def isGoalState(self, state):
         """
@@ -368,26 +372,29 @@ class CornersProblem(search.SearchProblem):
 
             '''
                 INSÉREZ VOTRE SOLUTION À LA QUESTION 5 ICI
+                source:
+                Shihan Ran, Assignment 1. Search in Pacman-Project Report. 
+                https://rshcaroline.github.io/research/resources/pacman-report.pdf, consulté le 2021-10-04
             '''
 
             hitsWall = self.walls[nextx][nexty]
 
             if not hitsWall:
 
-            #     nextState = ((nextx, nexty), self.found_corners)
+            #     next = ((nextx, nexty), self.found_corners)
             #     cost = self.costFn(nextState[0])
             # on ne veut pas retourner dans un coin ou on a déja été? peut etre pas important
 
-                nextState = {'position': (nextx,nexty),
+                successor = {'position': (nextx,nexty),
                              (1,1): state[(1,1)],
                              (1,top): state[(1,top)],
                              (right,1): state[(right,1)],
                              (right,top): state[(right,top)]}
 
-                if nextState['position'] in self.corners:
-                    nextState[nextState['position']] = False
-                cost = self.costFn(nextState['position'])
-                successors.append((nextState, action, cost))
+                if successor['position'] in self.corners:
+                    successor[successor['position']] = False
+                stepCost = self.costFn(successor['position'])
+                successors.append((successor, action, stepCost))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
