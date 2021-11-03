@@ -7,8 +7,25 @@ array[1..c] of int: colinsects; % total of insects by col
 array[1..r, 1..c] of 0..r*c: knownpositions;  % known number of insects, 0 appears when unknown
 
 
+
 array[1..r, 1..c] of var 1..r*c: x; % the final garden grid (decision variable)
 
+%contrainte pour chaque colonne
+% sum(la structure de laquelle je tire mes elements )(ce que j'aditionne atteint avec i)
+set of int: columns = 1..c;
+set of int: rows = 1..r;
+
+%sum d'une colonne
+constraint forall(i in columns)((sum(j in rows)(x[i,j]))=colinsects[i]);
+
+%contrainte pour chaque row
+constraint forall(j in rows)((sum(i in columns)(x[i,j]))=rowinsects[j]);
+
+%contrainte known number
+%if y != 0 then x div y else 0 endif;
+%constraint forall(i in columns, j in rows)(x[i,j]=if knownpositions[i,j] !=0 then knownpositions[i,j] endif);
+%constraint forall(i in columns, j in rows)(x[i,j]=1);
+solve satisfy;
 
 output [
   "["
