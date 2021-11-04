@@ -13,7 +13,6 @@ array[1..r, 1..c] of var 1..r*c: x; % the final garden grid (decision variable)
 %--------------------------------------------------------------
 
 %contrainte pour chaque colonne
-% sum(la structure de laquelle je tire mes elements )(ce que j'aditionne atteint avec i)
 set of int: columns = 1..c;
 set of int: rows = 1..r;
 
@@ -29,7 +28,11 @@ where knownpositions[i, j] != 0) (x[i,j] = knownpositions[i,j]);
 
 
 %contrainte pas le mm nb d'insect dans une row ou colonme
-%constraint alldifferent(order);
+include "alldifferent.mzn";
+
+constraint forall(i in index_set(rows))(alldifferent(j in columns)(x[i,j]));
+             
+constraint forall(j in index_set(columns))(alldifferent(i in rows)(x[i,j]));
 
 solve satisfy;
 
