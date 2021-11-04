@@ -18,10 +18,10 @@ set of int: columns = 1..c;
 set of int: rows = 1..r;
 
 %sum d'une colonne
-%constraint forall(i in index_set(columns))((sum(j in rows)(x[i,j]))=colinsects[i]);
+constraint forall(i in index_set(columns))(sum(j in rows)(x[j,i])=colinsects[i]);
 
 %contrainte pour chaque row
-%constraint forall(j in rows)((sum(i in columns)(x[i,j]))=rowinsects[j]);
+constraint forall(i in index_set(rows))(sum(j in columns)(x[i,j])=rowinsects[i]);
 
 %contrainte known number
 constraint forall (i in index_set(rows), j in index_set(columns)  
