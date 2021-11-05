@@ -28,27 +28,28 @@ constraint forall(j in index_set(cols))(count_eq( [x[i,j] | i in index_set(rows)
 
 % C3: Les plantes ne doivent pas se toucher horizontalement, verticalement ni en diagonale.
 
+constraint forall(i in index_set(rows))(forall(j in index_set(cols))(forall(a_i in -1..1)(forall(a_j in -1..1)(if x[i, j]=P /\ not(a_j = 0 /\ a_i = 0) /\ i+a_i > 0 /\ i+a_i <= length(rows) /\ j+a_j > 0 /\ j+a_j <= length(cols) then x[i+a_i, j+a_j]=0 else true endif )) ));
 
 %constraint forall(i in index_set(rows))(forall(j in index_set(cols))(forall(a_i in -1..1)(forall(a_j in -1..1)(if x[i, j]=P /\ not(a_j = 0 /\ a_i = 0) /\ i+a_i > 0 /\ i+a_i <= length(rows) /\ j+a_j > 0 /\ j+a_j <= length(cols) then x[i+a_i, j+a_j]!=P else true endif )) ));
 
 % C3.1 x[i+1, j]
-constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\ i<length(rows) then x[i+1, j]!=P else true endif ));
+%constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\ i<length(rows) then x[i+1, j]!=P else true endif ));
 
 % C3.2 x[i-1, j]
-constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\i>1 then x[i-1, j]!=P else true endif ));
+%constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\i>1 then x[i-1, j]!=P else true endif ));
 
 % C3.3 x[i, j+1]
-constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\j<length(cols) then x[i, j+1]!=P else true endif ));
+%constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\j<length(cols) then x[i, j+1]!=P else true endif ));
 
 
 % C3.4 x[i, j-1]
-constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\j>1 then x[i, j-1]!=P else true endif ));
+%constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\j>1 then x[i, j-1]!=P else true endif ));
 
 % C3.5 x[i-1, j-1]
-constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\j>1 /\ i>1 then x[i-1, j-1]!=P else true endif ));
+%constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\j>1 /\ i>1 then x[i-1, j-1]!=P else true endif ));
 
 % C3.6 x[i-1, j+1]
-constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\ j<length(cols) /\ i>1 then x[i-1, j+1]!=P else true endif ));
+%constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\ j<length(cols) /\ i>1 then x[i-1, j+1]!=P else true endif ));
 
 % C3.7 x[i+1, j-1]
 %constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\ i<length(rows) /\ j>1 then x[i+1, j-1]!=P else true endif ));
@@ -64,7 +65,8 @@ constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=
 
 % C6: Les plantes ne peuvent pas être la ou il y a des lampes
 
-%constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if garden[i, j]= L then x[i, j]!=P else true endif));
+
+constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if garden[i, j]= L then x[i, j]!=P else true endif));
 %--------------------------------------------------------------
 
 
