@@ -15,6 +15,7 @@ array[1..n] of int: cols;
 % decision variables : position des plantes
 array[1..n,1..n] of var 0..P: x;
 %--------------------------------------------------------------
+%array[1..4] of -1..1:a = [-1, 0, 1];
 
 % C1: nb plantes fixe par ligne
 %constraint alldifferent_except_0([grid[i,j] | i,j in NUM]);
@@ -27,12 +28,40 @@ constraint forall(j in index_set(cols))(count_eq( [x[i,j] | i in index_set(rows)
 
 % C3: Les plantes ne doivent pas se toucher horizontalement, verticalement ni en diagonale.
 
+% C3.1 x[i+1, j]
+constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\ i<length(rows) then x[i+1, j]!=P else true endif ));
+
+% C3.2 x[i-1, j]
+constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\i>1 then x[i-1, j]!=P else true endif ));
+
+% C3.3 x[i, j+1]
+constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\j<length(cols) then x[i, j+1]!=P else true endif ));
+
+
+% C3.4 x[i, j-1]
+constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\j>1 then x[i, j-1]!=P else true endif ));
+
+% C3.5 x[i-1, j-1]
+constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\j>1 /\ i>1 then x[i-1, j-1]!=P else true endif ));
+
+% C3.6 x[i-1, j+1]
+constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\ j<length(cols) /\ i>1 then x[i-1, j+1]!=P else true endif ));
+
+% C3.7 x[i+1, j-1]
+constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\ i<length(rows) /\ j>1 then x[i+1, j-1]!=P else true endif ));
+
+% C3.8 x[i+1, j+1]
+constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if x[i, j]=P /\ i<length(rows) /\ j<length(cols) then x[i+1, j+1]!=P else true endif ));
+
+
+
 % C4: Chaque plante doit être directement à côté d’une lampe solaire (horizontalement ou verticalement).
 
 % C5: Chaque lampe doit être directement à côté d’au moins une plante (horizontalement ou verticalement).
 
 % C6: Les plantes ne peuvent pas être la ou il y a des lampes
 
+constraint forall(i in index_set(rows))(forall(j in index_set(cols))(if garden[i, j]= L then x[i, j]!=P else true endif));
 %--------------------------------------------------------------
 
 
