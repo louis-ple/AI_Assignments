@@ -1,3 +1,5 @@
+% Frédérique Roy (1894397) et Louis Plessis (1933334)
+
 include "globals.mzn"; 
 
 int: n = 5;
