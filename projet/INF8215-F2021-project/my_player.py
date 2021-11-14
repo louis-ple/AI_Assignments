@@ -49,7 +49,7 @@ class MyAgent(Agent):
         # TODO: implement your agent and return an action for the current step.
 
         board = dict_to_board(percepts)
-        depth = 1
+        depth = 2
         swap = {0: 1, 1: 0}
 
         # set of legal wall moves
@@ -99,7 +99,7 @@ class MyAgent(Agent):
                 print("min")
                 minvalue = math.inf
                 # pour chaque noeud = pour chaque action possible
-                for pmove in boardAB.get_legal_pawn_moves(player):
+                for pmove in boardAB.get_legal_pawn_moves(swap[player]):
                     print(depthAB, pmove)
                     boardCloned = boardAB.clone()
                     boardCloned.play_action(pmove, swap[player])
