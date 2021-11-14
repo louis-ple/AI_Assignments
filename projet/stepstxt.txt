@@ -12,3 +12,9 @@
 -ajout de connaissance expert
 
 -alternative heuristique: distance jusqu'a victoire
+
+
+-différente heuristique selon condition : temps restant, nombre de mur mit
+-différente profondeur, profondeur variable.
+- on étudie l'option de mettre un mur seulement dans certaines conditions
+- etudier l'option de mettre un mur seulement autour de l'ennemi

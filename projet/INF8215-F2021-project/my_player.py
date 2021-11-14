@@ -49,7 +49,7 @@ class MyAgent(Agent):
         # TODO: implement your agent and return an action for the current step.
 
         board = dict_to_board(percepts)
-        depth = 2
+        depth = 1
         swap = {0: 1, 1: 0}
 
         # set of legal wall moves
@@ -63,8 +63,8 @@ class MyAgent(Agent):
 
         def simpleHeuristic(board, player):
             #  maximise (min_steps_before_victory(player^) - min_steps_before_victory(player) )
-            #value = board.min_steps_before_victory(swap[player]) - board.min_steps_before_victory(player)
-            value = -board.min_steps_before_victory(player)
+            value = board.min_steps_before_victory(swap[player]) - board.min_steps_before_victory(player)
+            # value = -board.min_steps_before_victory(player)
 
             print("simple_heuristic", value)
             return value
@@ -80,26 +80,37 @@ class MyAgent(Agent):
                 maxvalue = -math.inf
 
                 # pour chaque noeud = pour chaque action possible
-                for pmove in boardAB.get_legal_pawn_moves(player):
-                    print(depthAB, pmove)
+                print(boardAB.get_actions(player))
+                for pmove in boardAB.get_actions(player):
 
-                    boardCloned = boardAB.clone()
-                    boardCloned.play_action(pmove, player)
-                    v, m = alphabeta(boardCloned, depthAB - 1, alpha, beta, False)
-                    if (v > maxvalue):
-                        maxvalue = v
-                        move = pmove
-                        if maxvalue >= beta:
-                            print("break, β cutoff")
-                            break
-                        alpha = max(alpha, maxvalue)
+                    # ici on aimerait filtrer les positions de mur considérer
+                    # pour ne garder que les positions autour de l'oposant
+                    skip = False
+                    if pmove[0] == 'WH' or pmove[0] == 'WV':
+                        print("f")
+                        position_op = boardAB.pawns[swap[player]]
+                        if abs(pmove[1] - position_op[0]) > 3 or abs(pmove[2] - position_op[1]) > 3:
+                            skip = True
+                    # fin  filtre
+                    if not skip:
+                        print(depthAB, pmove)
+                        boardCloned = boardAB.clone()
+                        boardCloned.play_action(pmove, player)
+                        v, m = alphabeta(boardCloned, depthAB - 1, alpha, beta, False)
+                        if v > maxvalue:
+                            maxvalue = v
+                            move = pmove
+                            if maxvalue >= beta:
+                                print("break, β cutoff")
+                                break
+                            alpha = max(alpha, maxvalue)
 
                 return maxvalue, move
             else:
                 print("min")
                 minvalue = math.inf
                 # pour chaque noeud = pour chaque action possible
-                for pmove in boardAB.get_legal_pawn_moves(swap[player]):
+                for pmove in boardAB.get_actions(swap[player]):
                     print(depthAB, pmove)
                     boardCloned = boardAB.clone()
                     boardCloned.play_action(pmove, swap[player])
