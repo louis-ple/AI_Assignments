@@ -1,0 +1,14 @@
+- Min-max profondeur de 2, heuristique  = distance de la victoire (sans mur)
+
+- Min-max, profondeur de 2, avec 
+	heuristique = ( Max-player’s moves to next column 
+			- Min-player’s moves to next column ) (petit, on veut le min)
+	p1=p2=0.5
+
+- profondeur variable selon le temps
+
+-ajout d'aléatoire
+
+-ajout de connaissance expert
+
+-alternative heuristique: distance jusqu'a victoire
