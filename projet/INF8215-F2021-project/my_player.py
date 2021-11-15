@@ -49,7 +49,7 @@ class MyAgent(Agent):
         # TODO: implement your agent and return an action for the current step.
 
         board = dict_to_board(percepts)
-        depth = 1
+        depth = 2
         swap = {0: 1, 1: 0}
 
         # set of legal wall moves
@@ -61,67 +61,113 @@ class MyAgent(Agent):
         # board_c = board.clone()
         shortest_path = board.get_shortest_path(player)
 
-        def simpleHeuristic(board, player):
+        def simpleHeuristic(board, p):
+            # maximise la différence entre le nb de pas restant avant la victoire pour l'adversaire et
+            # les pas restant avant la victoire pour le joueur.
             #  maximise (min_steps_before_victory(player^) - min_steps_before_victory(player) )
-            value = board.min_steps_before_victory(swap[player]) - board.min_steps_before_victory(player)
+            pSteps = board.min_steps_before_victory(p)
+            aSteps = board.min_steps_before_victory(swap[p])
+            value = aSteps - pSteps
+            # value = - board.min_steps_before_victory(player)
             # value = -board.min_steps_before_victory(player)
 
-            print("simple_heuristic", value)
-            return value
+            # print("simple_heuristic", value)
+            return value, pSteps, aSteps
+
+        # Stratégie B : permet d'identifier les meilleurs mouvements potentiels
+        # on va évaluer plus bas seulement pour les meilleurs mouvements.
+        def getBestMoves(board, p):
+            bestMove = []
+            currentScore, pSteps, aSteps = simpleHeuristic(board, p)
+            print("current score", currentScore)
+            # ajouter le cas si on est pour perdre
+            positionOp = board.pawns[swap[player]]
+
+            # TODO: si on est en désavantage, on étudie la possibilité de mettre un mur
+
+            # s'il reste moins de 2 pas pour que l'adversaire gagne et nous plus de 2 et qu'il nous reste des murs
+            if aSteps <= 2 and pSteps > 2 and board.nb_walls[p] > 0:
+                print('<2 steps !!!')
+                for m in board.get_legal_wall_moves(p):
+                    boardc = board.clone()
+                    boardc.play_action(m, p)
+                    newScore, _, _ = simpleHeuristic(boardc, p)
+                    if newScore > currentScore:
+                        bestMove.append((m, boardc))
+            elif currentScore < 0:
+                print("current score < 0")
+                for m in board.get_actions(p):
+                    # on étudie la possibilité de mettre un mur autour de l'opposant seulement
+                    if abs(m[1] - positionOp[0]) < 4 or abs(m[2] - positionOp[1]) < 4:
+                        boardc = board.clone()
+                        boardc.play_action(m, p)
+                        newScore, _, _ = simpleHeuristic(boardc, p)
+                        if newScore > currentScore:
+                            bestMove.append((m, boardc))
+                        print(m, 'cScore', currentScore, 'nScore', newScore, 'step_p',
+                              boardc.min_steps_before_victory(p),
+                              'step_a', boardc.min_steps_before_victory(swap[p]))
+            # si on est en avantage ou exaco, on déplace notre pion
+            else:
+                print("current score >= 0")
+
+                for m in board.get_legal_pawn_moves(p):
+                    boardc = board.clone()
+                    boardc.play_action(m, p)
+                    newScore, _, _ = simpleHeuristic(boardc, p)
+                    if newScore >= currentScore:
+                        bestMove.append((m, boardc))
+                    print(m, 'cScore', currentScore, 'nScore', newScore, 'step_p', boardc.min_steps_before_victory(p),
+                          'step_a', boardc.min_steps_before_victory(swap[p]))
+            # TODO: verification si bestMove est vide
+
+            return bestMove
 
         # https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
         def alphabeta(boardAB, depthAB, alpha, beta, maximizingPlayer):
             if depthAB == 0 or boardAB.is_finished():
                 print("end")
-                return simpleHeuristic(boardAB, player), None
+                value, _, _ = simpleHeuristic(boardAB, player)
+                return value, None
             move = None
             if maximizingPlayer:
                 print("max")
                 maxvalue = -math.inf
 
-                # pour chaque noeud = pour chaque action possible
-                print(boardAB.get_actions(player))
-                for pmove in boardAB.get_actions(player):
-
-                    # ici on aimerait filtrer les positions de mur considérer
-                    # pour ne garder que les positions autour de l'oposant
+                # on commence par déterminer les meilleurs mouvements potentiel (stratégie B)
+                bestMove = getBestMoves(boardAB, player)
+                # On étant les noeuds des meilleurs candidats
+                for (pmove, boardCloned) in bestMove:
                     skip = False
-                    if pmove[0] == 'WH' or pmove[0] == 'WV':
-                        print("f")
-                        position_op = boardAB.pawns[swap[player]]
-                        if abs(pmove[1] - position_op[0]) > 3 or abs(pmove[2] - position_op[1]) > 3:
-                            skip = True
-                    # fin  filtre
                     if not skip:
-                        print(depthAB, pmove)
-                        boardCloned = boardAB.clone()
-                        boardCloned.play_action(pmove, player)
-                        v, m = alphabeta(boardCloned, depthAB - 1, alpha, beta, False)
-                        if v > maxvalue:
-                            maxvalue = v
-                            move = pmove
-                            if maxvalue >= beta:
-                                print("break, β cutoff")
-                                break
-                            alpha = max(alpha, maxvalue)
+                        if True:
+                            v, m = alphabeta(boardCloned, depthAB - 1, alpha, beta, False)
+                            if v > maxvalue:
+                                maxvalue = v
+                                move = pmove
+                                if maxvalue >= beta:
+                                    # print("break, β cutoff")
+                                    break
+                                alpha = max(alpha, maxvalue)
 
                 return maxvalue, move
             else:
                 print("min")
                 minvalue = math.inf
                 # pour chaque noeud = pour chaque action possible
-                for pmove in boardAB.get_actions(swap[player]):
-                    print(depthAB, pmove)
-                    boardCloned = boardAB.clone()
-                    boardCloned.play_action(pmove, swap[player])
-                    v, m = alphabeta(boardCloned, depthAB - 1, alpha, beta, True)
-                    if (v < minvalue):
-                        minvalue = v
-                        move = pmove
-                        if minvalue <= alpha:
-                            print("break, a cutoff")
-                            break
-                        beta = min(beta, minvalue)
+                bestMove = getBestMoves(boardAB, swap[player])
+                for (pmove, boardCloned) in bestMove:
+                    skip = False
+                    if not skip:
+                        if True:
+                            v, m = alphabeta(boardCloned, depthAB - 1, alpha, beta, True)
+                            if (v < minvalue):
+                                minvalue = v
+                                move = pmove
+                                if minvalue <= alpha:
+                                    # print("break, a cutoff")
+                                    break
+                                beta = min(beta, minvalue)
                 return minvalue, move
 
         alpha = -math.inf
