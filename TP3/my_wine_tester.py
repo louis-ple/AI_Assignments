@@ -2,8 +2,8 @@
 Team:
 <<<<< TEAM NAME >>>>>
 Authors:
-<<<<< NOM COMPLET #1 - MATRICULE #1 >>>>>
-<<<<< NOM COMPLET #2 - MATRICULE #2 >>>>>
+<<<<< Frédérique Roy - 1894397 >>>>>
+<<<<< Louis Plessis - 1933334 >>>>>
 """
 
 from wine_testers import WineTester
@@ -27,7 +27,7 @@ class MyWineTester(WineTester):
                 the second column is the example label.
         """
         # TODO: entrainer un modèle sur X_train & y_train
-        raise NotImplementedError()
+        print("TODO")
 
     def predict(self, X_data):
         """
@@ -46,4 +46,4 @@ class MyWineTester(WineTester):
         :return: a 2D list of predictions with 2 columns: ID and prediction
         """
         # TODO: make predictions on X_data and return them
-        raise NotImplementedError()
+        print("TODO")
