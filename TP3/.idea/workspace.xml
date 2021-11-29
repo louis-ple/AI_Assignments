@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d06a6292-5c57-4b82-97fd-aff20c56e5ba" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/M7-apprentisage-supervise.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/my_wine_tester.py" beforeDir="false" afterPath="$PROJECT_DIR$/my_wine_tester.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Untitled.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/Untitled.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/submission.csv" beforeDir="false" afterPath="$PROJECT_DIR$/submission.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +57,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1638169424701</updated>
-      <workItem from="1638169426864" duration="3567000" />
+      <workItem from="1638169426864" duration="4157000" />
     </task>
     <servers />
   </component>
