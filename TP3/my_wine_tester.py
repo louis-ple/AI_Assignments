@@ -1,6 +1,6 @@
 """
 Team:
-<<<<< TEAM NAME >>>>>
+<<<<< FlyingLotus >>>>>
 Authors:
 <<<<< Frédérique Roy - 1894397 >>>>>
 <<<<< Louis Plessis - 1933334 >>>>>
@@ -12,7 +12,7 @@ import numpy as np
 
 from sklearn.dummy import DummyClassifier
 from sklearn.naive_bayes import BernoulliNB
-from sklearn.tree import A
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
@@ -74,12 +74,12 @@ class MyWineTester(WineTester):
         X_valid = np.delete(X_valid, 0, 1)
 
         # Model
-        params = [{'max_depth': [17, 18, 19], 'n_estimators': [400, 700, 1000]}]
-        self.classifier = GridSearchCV(RandomForestClassifier(criterion='entropy'), params, refit=True)
-        #self.classifier = RandomForestClassifier(max_depth=18, n_estimators=400)
+        #params = [{'max_depth': [17, 18, 19], 'n_estimators': [400, 700, 1000]}]
+        #self.classifier = GridSearchCV(RandomForestClassifier(criterion='entropy'), params, refit=True)
+        self.classifier = RandomForestClassifier(max_depth=18, n_estimators=700, criterion='entropy')
         self.classifier = self.classifier.fit(X_train, y_train)
 
-        print(self.classifier.best_params_)
+        #print(self.classifier.best_params_)
 
         predictions_valid = self.classifier.predict(X_valid)
         print("Validation accuracy: ", accuracy_score(y_valid, predictions_valid))
